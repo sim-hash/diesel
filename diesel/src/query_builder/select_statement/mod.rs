@@ -31,7 +31,7 @@ use super::select_clause::*;
 use super::where_clause::*;
 use super::{AstPass, Query, QueryFragment};
 use crate::backend::{Backend, sql_dialect};
-use crate::expression::subselect::ValidSubselect;
+use crate::expression::subselect::{SubselectWhereClause, ValidSubselect};
 use crate::expression::*;
 use crate::query_builder::having_clause::NoHavingClause;
 use crate::query_builder::limit_offset_clause::LimitOffsetClause;
@@ -331,6 +331,12 @@ where
     QS: QuerySource,
     W: ValidWhereClause<NoFromClause>,
 {
+}
+
+impl<F, S, D, W, O, LOf, G, H, LC> SubselectWhereClause
+    for SelectStatement<F, S, D, W, O, LOf, G, H, LC>
+{
+    type WhereClause = W;
 }
 
 /// Allow `SelectStatement<From>` to act as if it were `From` as long as

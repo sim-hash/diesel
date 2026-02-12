@@ -136,6 +136,17 @@ where
     }
 }
 
+impl<GB> ValidGrouping<GB> for NoWhereClause {
+    type IsAggregate = is_aggregate::Never;
+}
+
+impl<Expr, GB> ValidGrouping<GB> for WhereClause<Expr>
+where
+    Expr: ValidGrouping<GB>,
+{
+    type IsAggregate = <Expr as ValidGrouping<GB>>::IsAggregate;
+}
+
 /// Marker trait indicating that a `WHERE` clause is valid for a given query
 /// source.
 pub trait ValidWhereClause<QS> {}

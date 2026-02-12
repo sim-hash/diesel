@@ -1,7 +1,7 @@
 use super::methods::LimitDsl;
 use crate::dsl::Limit;
 use crate::expression::grouped::Grouped;
-use crate::expression::subselect::Subselect;
+use crate::expression::subselect::{Subselect, SubselectWhereClause};
 use crate::query_builder::SelectQuery;
 use crate::sql_types::IntoNullable;
 
@@ -24,9 +24,15 @@ impl<T> SingleValueDsl for T
 where
     Self: SelectQuery + LimitDsl,
     <Self as SelectQuery>::SqlType: IntoNullable,
+    Limit<Self>: SubselectWhereClause,
 {
-    type Output =
-        Grouped<Subselect<Limit<Self>, <<Self as SelectQuery>::SqlType as IntoNullable>::Nullable>>;
+    type Output = Grouped<
+        Subselect<
+            Limit<Self>,
+            <<Self as SelectQuery>::SqlType as IntoNullable>::Nullable,
+            <Limit<Self> as SubselectWhereClause>::WhereClause,
+        >,
+    >;
 
     fn single_value(self) -> Self::Output {
         Grouped(Subselect::new(self.limit(1)))

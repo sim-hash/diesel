@@ -2,7 +2,7 @@ use core::marker::PhantomData;
 
 use crate::backend::{DieselReserveSpecialization, sql_dialect};
 use crate::dsl::AsExprOf;
-use crate::expression::subselect::ValidSubselect;
+use crate::expression::subselect::{SubselectWhereClause, ValidSubselect};
 use crate::expression::*;
 use crate::insertable::Insertable;
 use crate::query_builder::combination_clause::*;
@@ -198,6 +198,10 @@ where
 impl<ST, QS, QS2, DB, GB> ValidSubselect<QS2> for BoxedSelectStatement<'_, ST, QS, DB, GB> where
     Self: Query<SqlType = ST>
 {
+}
+
+impl<ST, QS, DB, GB> SubselectWhereClause for BoxedSelectStatement<'_, ST, QS, DB, GB> {
+    type WhereClause = ();
 }
 
 impl<ST, QS, DB, GB> QueryFragment<DB> for BoxedSelectStatement<'_, ST, QS, DB, GB>

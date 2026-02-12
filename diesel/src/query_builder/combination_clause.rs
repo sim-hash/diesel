@@ -12,7 +12,7 @@ use crate::backend::{Backend, DieselReserveSpecialization};
 use crate::dsl::AsExprOf;
 use crate::expression::IntoSql;
 use crate::expression::NonAggregate;
-use crate::expression::subselect::ValidSubselect;
+use crate::expression::subselect::{SubselectWhereClause, ValidSubselect};
 use crate::query_builder::insert_statement::InsertFromSelect;
 use crate::query_builder::limit_clause::{LimitClause, NoLimitClause};
 use crate::query_builder::limit_offset_clause::LimitOffsetClause;
@@ -97,6 +97,12 @@ where
     Source: ValidSubselect<QS>,
     Rhs: ValidSubselect<QS>,
 {
+}
+
+impl<Combinator, Rule, Source, Rhs, O, LOf> SubselectWhereClause
+    for CombinationClause<Combinator, Rule, Source, Rhs, O, LOf>
+{
+    type WhereClause = ();
 }
 
 impl<Combinator, Rule, Source, Rhs, O, LOf, Conn> RunQueryDsl<Conn>
